@@ -1,6 +1,11 @@
-const API_URL = "/api-infodengue/api/alertcity";
+const API_URL =
+  import.meta.env.PROD
+    ? "/api/infodengue"
+    : "/api-infodengue/api/alertcity";
 
-export async function buscarDadosDengueMaisRecentes(codigoIbge) {
+export async function buscarDadosDengueMaisRecentes(
+  codigoIbge
+) {
   const anoAtual = new Date().getFullYear();
 
   const parametros = new URLSearchParams({
@@ -13,14 +18,21 @@ export async function buscarDadosDengueMaisRecentes(codigoIbge) {
     ey_end: String(anoAtual),
   });
 
-  const url = `${API_URL}?${parametros.toString()}`;
+  const url =
+    `${API_URL}?${parametros.toString()}`;
 
-  console.log("Consultando InfoDengue:", url);
+  console.log(
+    "Consultando InfoDengue:",
+    url
+  );
 
   try {
     const response = await fetch(url);
 
-    console.log("Status InfoDengue:", response.status);
+    console.log(
+      "Status InfoDengue:",
+      response.status
+    );
 
     if (!response.ok) {
       throw new Error(
@@ -28,31 +40,45 @@ export async function buscarDadosDengueMaisRecentes(codigoIbge) {
       );
     }
 
-    const dados = await response.json();
+    const dados =
+      await response.json();
 
-    console.log("Resposta InfoDengue:", dados);
+    console.log(
+      "Resposta InfoDengue:",
+      dados
+    );
 
     if (!Array.isArray(dados)) {
-      throw new Error("RESPOSTA_INFODENGUE_INVALIDA");
+      throw new Error(
+        "RESPOSTA_INFODENGUE_INVALIDA"
+      );
     }
 
     if (dados.length === 0) {
       return null;
     }
 
-    const dadosValidos = dados.filter((registro) => {
-      const semana = registro.SE ?? registro.se;
+    const dadosValidos =
+      dados.filter((registro) => {
+        const semana =
+          registro.SE ?? registro.se;
 
-      return semana !== undefined && semana !== null;
-    });
+        return (
+          semana !== undefined &&
+          semana !== null
+        );
+      });
 
     if (dadosValidos.length === 0) {
       return null;
     }
 
     dadosValidos.sort((a, b) => {
-      const semanaA = Number(a.SE ?? a.se);
-      const semanaB = Number(b.SE ?? b.se);
+      const semanaA =
+        Number(a.SE ?? a.se);
+
+      const semanaB =
+        Number(b.SE ?? b.se);
 
       return semanaB - semanaA;
     });
